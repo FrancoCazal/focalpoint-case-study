@@ -14,7 +14,9 @@ Focal Point is a production-oriented ERP + ecommerce SaaS that consolidates inve
 
 **Status:** Production system. Core ERP modules, per-tenant ecommerce storefront, and the WhatsApp AI agent are live, running on a single AWS region for active tenants in retail and services.
 
-**Role:** Co-founder & CTO.
+**Role:** Co-founder & Founding Engineer. I co-founded Focal Point with my partners and led engineering end-to-end.
+
+**My tenure:** Dec 2023 – Mar 2026. The company continues to operate; this case study covers the system as I built and ran it.
 
 ---
 
@@ -232,7 +234,7 @@ That balance is what I bring to engineering work: enough seniority to know when 
 
 ## Contact
 
-Franco Cazal · Co-founder & CTO, Focal Point
+Franco Cazal · Co-founder & Founding Engineer, Focal Point (Dec 2023 – Mar 2026)
 
 - Portfolio · [francocazal.com](https://francocazal.com)
 - Email · [contact@francocazal.com](mailto:contact@francocazal.com)
