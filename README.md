@@ -82,7 +82,7 @@ Rather than one monolithic API, the backend is organized into four explicit laye
 | **ADMIN** | `admin.<platform>` | Sessions (`BackofficeUser`) | `/api/v1/admin/` | Platform staff: tenant provisioning, billing, analytics |
 | **ERP** | `<tenant>.<platform>` | JWT cookie (`User`) | `/api/v1/erp/` | Tenant employees: full ERP functionality |
 | **SITE** | `<tenant>.<platform>` | Anonymous (optional account) | `/api/v1/site/` | Public storefront: catalog, cart, anonymous checkout, order tracking |
-| **PUBLIC** | `<platform>` | None | `/` | Webhooks (SIFEN, PagoPar, Twilio), OAuth |
+| **PUBLIC** | `<platform>` | None | `/` | Webhooks (SIFEN, PagoPar, WhatsApp), OAuth |
 
 Layers are enforced by an `AppLayerMiddleware` + `LayerAuthMiddleware` pair: the layer is determined from the subdomain, and the auth backend / permission classes are selected accordingly. A request to the wrong layer for the wrong subdomain is rejected before it reaches a view.
 
