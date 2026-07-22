@@ -135,6 +135,7 @@ What we'd do differently at scale: introduce ECS Fargate as soon as we need a se
 
 The WhatsApp agent isn't a single LLM call: it's a small graph with explicit nodes for intent classification, retrieval over the tenant's catalog and knowledge base, action execution (creating quotes, checking stock), and response generation.
 
+- **Channel:** Meta WhatsApp Cloud API. The original integration shipped on Twilio and was later migrated to Meta's API directly.
 - **LangGraph** gives us a real state machine, persisted between turns. The agent can hand off, ask clarifying questions, and resume mid-workflow.
 - **Memory is per-tenant per-conversation**, stored in Redis with explicit TTLs.
 - **Cost discipline:** cost-aware model routing with a deterministic fallback chain for high-volume cheap nodes. Each call is logged with token counts and estimated USD cost, surfaced in the platform admin dashboard.
