@@ -116,7 +116,7 @@ Request
 ### 4.1 Why Django, not FastAPI or Node?
 
 - **The admin and the ORM pay for themselves.** A multi-module ERP has hundreds of models and dozens of internal tools. The Django admin handles the long tail of one-off operational needs without a line of frontend code.
-- **`django-tenants` is the most mature multi-schema multi-tenancy implementation** in any ecosystem I evaluated.
+- **`django-tenants` is the most mature multi-schema multi-tenancy implementation** in any ecosystem we evaluated.
 - **DRF + drf-spectacular** gives us OpenAPI schemas per layer essentially for free.
 - **Trade-off:** Django's async story is weaker than FastAPI's. Mitigated by using **Django Channels for WebSockets** (real-time chat updates) and **Celery for background work** (SIFEN submissions, heavy reports, AI agent runs).
 
@@ -129,7 +129,7 @@ For the current scale (single instance, single region, single-digit active tenan
 - **Terraform handles everything else.** 8+ modules (network, security groups, RDS, EC2, ALB, S3, ElastiCache, CloudFront, ASG, monitoring) provision the full stack reproducibly.
 - **The migration path to ECS is preserved.** The Django app is already container-friendly; moving to ECS is a packaging change, not a rewrite.
 
-What I'd do differently at scale: introduce ECS Fargate as soon as we need a second instance for HA, and move the database migration step out of the deploy script into a separate gated job.
+What we'd do differently at scale: introduce ECS Fargate as soon as we need a second instance for HA, and move the database migration step out of the deploy script into a separate gated job.
 
 ### 4.3 AI agents: LangGraph over a single prompt
 
@@ -213,9 +213,9 @@ All provisioned via Terraform (`infra/modules/`). Environments (`production/`, `
 
 ---
 
-## 7. What I'd do differently
+## 7. What we'd do differently
 
-Honest reflection — these are the decisions I'd revisit:
+Honest reflection: these are the decisions we'd revisit:
 
 - **The deploy runner was initially co-located with the application instance** — moved off to a dedicated host to remove the coupling between deploy and runtime health.
 - **No automatic migrations on deploy** is a deliberate choice (safer for multi-schema migrations) but requires a manual step that's easy to forget. A gated migration job in CI would close the gap.
