@@ -40,7 +40,7 @@ The constraints shaped the architecture more than the requirements did:
 - **Strict tenant isolation.** Tenants are competing businesses; cross-tenant data leakage is an existential risk, not a bug.
 - **SIFEN integration is non-negotiable.** Invoices must be signed, transmitted, and reconciled with SET on a per-tenant basis (each tenant has its own RUC and signing certificate).
 - **Cost ceiling.** Infrastructure must run on a single small EC2 instance and `db.t4g.micro` RDS in early stages, with a clear path to scale horizontally without rewriting the data layer.
-- **AI cost discipline.** Every WhatsApp message could trigger an LLM call. Default model choice (`gpt-4.1-mini`) and prompt structure had to be cost-aware from day one.
+- **AI cost discipline.** Every WhatsApp message could trigger an LLM call. Model choice and prompt structure had to be cost-aware from day one.
 - **Solo-friendly operations.** The system needed to be operable by a small team — reproducible infrastructure, structured logs, real observability, and zero manual deployment steps.
 
 ---
@@ -137,7 +137,7 @@ The WhatsApp agent isn't a single LLM call — it's a small graph with explicit 
 
 - **LangGraph** gives us a real state machine, persisted between turns. The agent can hand off, ask clarifying questions, and resume mid-workflow.
 - **Memory is per-tenant per-conversation**, stored in Redis with explicit TTLs.
-- **Cost discipline:** the default model is `gpt-4.1-mini`; `gpt-3.5-turbo` is the fallback for high-volume cheap nodes. Each call is logged with token counts and estimated USD cost, surfaced in the platform admin dashboard.
+- **Cost discipline:** cost-aware model routing with a deterministic fallback chain for high-volume cheap nodes. Each call is logged with token counts and estimated USD cost, surfaced in the platform admin dashboard.
 - **Safety:** the agent can read most of the tenant's data but can only write through a small allowlist of tools (create quote, request human handoff). Anything financial requires human confirmation in the ERP.
 
 ### 4.4 SIFEN: integration as a separate domain
