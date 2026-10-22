@@ -8,7 +8,7 @@
 
 ## TL;DR
 
-Focal Point is a production-oriented ERP + ecommerce SaaS that consolidates inventory, sales, CRM, HR, finance, electronic invoicing, a per-tenant storefront with online payments, and AI-powered customer interactions into a single multi-tenant platform. It was built to give Paraguayan SMBs an integrated alternative to the typical mix of spreadsheets, legacy desktop ERPs, disconnected WhatsApp conversations, and ad-hoc Tiendanube-style storefronts, while remaining compliant with SIFEN (the national e-invoicing system).
+Focal Point is a production-oriented ERP + ecommerce SaaS that consolidates inventory, sales, CRM, finance, electronic invoicing, a per-tenant storefront with online payments, and AI-powered customer interactions into a single multi-tenant platform. It was built to give Paraguayan SMBs an integrated alternative to the typical mix of spreadsheets, legacy desktop ERPs, disconnected WhatsApp conversations, and ad-hoc Tiendanube-style storefronts, while remaining compliant with SIFEN (the national e-invoicing system).
 
 **Stack:** Django 5.x · DRF · Channels · Next.js · PostgreSQL 17 (schema-per-tenant via `django-tenants`) · Valkey/Redis · LangGraph + OpenAI · Meta WhatsApp Cloud API · PagoPar · AWS (EC2, RDS, ElastiCache, S3, CloudFront, SES) · Terraform · GitHub Actions · Sentry + Prometheus + Grafana.
 
@@ -69,7 +69,7 @@ Tenants are routed by subdomain (`<tenant>.<platform>`). A `TenantMainMiddleware
 
 **Tradeoffs accepted:**
 
-- **Migrations are slower.** A schema migration runs once per tenant. At hundreds of tenants this becomes minutes; at thousands it becomes a problem. Mitigation: migrations are run in parallel batches, and breaking changes are gated behind feature flags.
+- **Migrations are slower.** A schema migration runs once per tenant: seconds at today's single-digit count, minutes if tenants reach the hundreds, a problem at thousands. Mitigation: migrations are run in parallel batches, and breaking changes are gated behind feature flags.
 - **Connection pooling is more complex.** Each schema effectively requires its own search path. Mitigation: middleware sets `search_path` per request; no persistent per-tenant connections.
 - **Cross-tenant analytics requires a separate path.** Solved via a dedicated reporting layer in the `public` schema fed by per-tenant aggregates.
 
