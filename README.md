@@ -239,5 +239,5 @@ Franco Cazal · Co-founder & Founding Engineer, Focal Point (Dec 2023 – Mar 20
 
 - Portfolio · [francocazal.com](https://francocazal.com)
 - Email · [contact@francocazal.com](mailto:contact@francocazal.com)
-- LinkedIn · [linkedin.com/in/franco-cazal](https://www.linkedin.com/in/franco-cazal)
+- LinkedIn · [linkedin.com/in/francocazal](https://www.linkedin.com/in/francocazal)
 - GitHub · [@FrancoCazal](https://github.com/FrancoCazal)
