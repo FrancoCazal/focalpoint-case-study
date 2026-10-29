@@ -131,15 +131,23 @@ For the current scale (single instance, single region, single-digit active tenan
 
 What we'd do differently at scale: introduce ECS Fargate as soon as we need a second instance for HA, and move the database migration step out of the deploy script into a separate gated job.
 
-### 4.3 AI agents: LangGraph over a single prompt
+### 4.3 AI: two agents and a per-tenant knowledge base
 
-The WhatsApp agent isn't a single LLM call: it's a small graph with explicit nodes for intent classification, retrieval over the tenant's catalog and knowledge base, action execution (creating quotes, checking stock), and response generation.
+The platform runs two agents over the same ERP, plus a knowledge base each tenant fills with its own documents.
 
-- **Channel:** Meta WhatsApp Cloud API. The original integration shipped on Twilio and was later migrated to Meta's API directly.
-- **LangGraph** gives us a real state machine, persisted between turns. The agent can hand off, ask clarifying questions, and resume mid-workflow.
-- **Memory is per-tenant per-conversation**, stored in Redis with explicit TTLs.
-- **Cost discipline:** cost-aware model routing with a deterministic fallback chain for high-volume cheap nodes. Each call is logged with token counts and estimated USD cost, surfaced in the platform admin dashboard.
-- **Safety:** the agent can read most of the tenant's data but can only write through a small allowlist of tools (create quote, request human handoff). Anything financial requires human confirmation in the ERP.
+**The WhatsApp agent** isn't a single LLM call: it's a LangGraph state machine. Each turn starts with a context check that compacts long conversations, then an LLM router with structured output places the turn in a phase (greeting, browsing, cart, checkout or human handoff), and that phase's node runs with its own tools. Confirmation only follows a checkout that succeeded.
+
+- **Channel:** Meta WhatsApp Cloud API with Embedded Signup and HMAC-verified webhooks; the tenant is resolved per message from the WhatsApp business account. Text, voice notes, images and shared locations all work as input. The original integration shipped on Twilio and was later migrated to Meta's API directly.
+- **From search to order:** `search_products` queries the tenant's ERP catalog with attribute filters (size, color, material); the cart phase builds the order; checkout shows the full summary, waits for the customer to confirm, and only then calls `proceed_checkout`, which validates its arguments and writes a real order into the ERP.
+- **Human handoff:** when a customer asks for a person, the handoff node first tries the knowledge base. If that doesn't settle it, LangGraph's `interrupt()` pauses the graph until an operator resumes it. Staff can also pause a single conversation, a global kill switch turns the agent off, and customers can opt out.
+- **State:** the graph is checkpointed per tenant and conversation in Redis/Valkey with explicit TTLs, so a conversation survives a restart.
+
+**The staff copilot** is a second agent for the business's own team, reachable from the dashboard over WebSocket and from WhatsApp for enabled staff. Its tools cover sales, inventory, orders, delivery, clients and expenses; every write shows a preview first and runs only after the user confirms. A contract test covers its tenant isolation.
+
+**The knowledge base** is per tenant. Staff upload PDF, DOCX, XLSX, CSV, Markdown or text files; the text is extracted, then cleaned and structured by an LLM pass, and the catalog syncs in from the ERP. Embeddings live in pgvector with an HNSW index, and retrieval is hybrid (Postgres full-text + vector) fused with Reciprocal Rank Fusion. It moved from an in-memory index to pgvector behind per-tenant flags: on the canary tenant the new search returned the same top result on 10 of 10 queries, with 0.97 average top-5 overlap.
+
+- **Cost discipline:** every LLM call is logged per tenant with token counts and USD cost. Routing and summaries run on a smaller model than the answers, and long conversations are compacted; together that cut LLM cost per resolved interaction by ~25%.
+- **Safety:** tool arguments are validated before anything runs, the customer agent creates an order only after the customer confirms the summary, and every staff-copilot write waits for an explicit confirmation.
 
 ### 4.4 SIFEN: integration as a separate domain
 
