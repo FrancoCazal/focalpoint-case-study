@@ -14,7 +14,7 @@ Focal Point is a production-oriented ERP + ecommerce SaaS that consolidates inve
 
 **Status:** Production system. Core ERP modules, per-tenant ecommerce storefront, and the WhatsApp AI agent are live, running on a single AWS region for active tenants in retail and services.
 
-**Role:** Co-founder & Founding Engineer. I co-founded Focal Point with my partners and led engineering end-to-end.
+**Role:** Co-founder & Founding Engineer. I co-founded Focal Point with my partners and built its backend and AI.
 
 **My tenure:** Dec 2023 – Sep 2026. The company continues to operate; this case study covers the system as I built and ran it.
 
